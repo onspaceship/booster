@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/onspaceship/booster/pkg/config"
+	"github.com/onspaceship/booster/pkg/socket/handler"
 
 	"github.com/apex/log"
 	"github.com/gorilla/websocket"
@@ -64,9 +65,11 @@ func (socket *socket) Connect() {
 				logline = logline.WithField("status", resp.Status)
 			}
 
-			logline.Errorf("Could not reach MCC")
+			logline.Error("Could not reach MCC")
 			return false, nil
 		}
+
+		log.Info("Connected to MCC!")
 
 		socket.conn = conn
 		return true, nil
@@ -100,8 +103,10 @@ func (socket *socket) listen(done context.CancelFunc) {
 			return
 		}
 
-		if message.Topic == "booster:"+socket.AgentId {
-			log.Infof("Read from MCC: %+v", message)
+		if !isPhoenixEvent(message.Event) && message.Topic == "booster:"+socket.AgentId {
+			log.WithField("event", message.Event).WithField("payload", message.Payload).Debug("New message from MCC")
+
+			handler.Handle(string(message.Event), message.Payload)
 		}
 	}
 

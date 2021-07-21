@@ -17,6 +17,10 @@ const (
 	LeaveEvent Event = "phx_leave"
 )
 
+func isPhoenixEvent(event Event) bool {
+	return event == CloseEvent || event == ErrorEvent || event == JoinEvent || event == ReplyEvent || event == LeaveEvent
+}
+
 func (socket *socket) joinTopic(topic string) {
 	msg := &Message{
 		Topic: topic,
