@@ -1,12 +1,19 @@
 package handler
 
-import "github.com/apex/log"
+import (
+	"encoding/json"
 
-var handlers = map[string]func(payload interface{}){}
+	"github.com/apex/log"
+)
 
-func Handle(event string, payload interface{}) {
+var handlers = map[string]func(payload []byte, namespace string){}
+
+func Handle(event string, payload interface{}, namespace string) {
 	if handler, ok := handlers[event]; ok {
-		go handler(payload)
+
+		jsonPayload, _ := json.Marshal(payload)
+
+		go handler(jsonPayload, namespace)
 	} else {
 		log.WithField("event", event).WithField("payload", payload).Debug("Unhandled message")
 	}
