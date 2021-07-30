@@ -106,7 +106,7 @@ func (socket *socket) listen(done context.CancelFunc) {
 		if !isPhoenixEvent(message.Event) && message.Topic == "booster:"+socket.AgentId {
 			log.WithField("event", message.Event).WithField("payload", message.Payload).Debug("New message from MCC")
 
-			handler.Handle(string(message.Event), message.Payload, socket.Namespace)
+			handler.Handle(string(message.Event), message.Payload, socket.Options)
 		}
 	}
 
