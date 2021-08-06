@@ -15,6 +15,19 @@ func (client *Client) CoreAppGithubCredentials(appId string) (AppGithubCredentia
 	return credentials, err
 }
 
+func (client *Client) CoreBuildUpdate(buildId string, status string, imageURI string) error {
+	body := map[string]interface{}{
+		"status": status,
+		"image_attributes": map[string]string{
+			"uri": imageURI,
+		},
+	}
+
+	_, err := client.Put(client.corePath("/internal/builds/%s", buildId), body)
+
+	return err
+}
+
 func (client *Client) corePath(path string, tokens ...interface{}) string {
 	url, _ := client.CoreBaseURL.Parse(fmt.Sprintf(path, tokens...))
 	return url.String()
