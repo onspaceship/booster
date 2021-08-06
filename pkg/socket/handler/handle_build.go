@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/onspaceship/booster/pkg/client"
 	"github.com/onspaceship/booster/pkg/config"
 	"github.com/onspaceship/booster/pkg/controller"
 
 	"github.com/apex/log"
-
 	kpackapi "github.com/pivotal/kpack/pkg/apis/build/v1alpha1"
 	kpackclient "github.com/pivotal/kpack/pkg/client/clientset/versioned/typed/build/v1alpha1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -45,6 +45,12 @@ func handleBuild(jsonPayload []byte, options *config.SocketOptions) {
 
 	name := fmt.Sprintf("%s-%s-%s", payload.TeamHandle, payload.AppHandle, payload.BuildId)
 	tag := fmt.Sprintf("gcr.io/onspaceship/%s/%s", payload.TeamHandle, payload.AppHandle)
+
+	if strings.HasPrefix(payload.GitRef, "refs/heads/") {
+		branch := strings.ReplaceAll(payload.GitRef, "refs/heads/", "")
+		tag = fmt.Sprintf("gcr.io/onspaceship/%s/%s:%s", payload.TeamHandle, payload.AppHandle, branch)
+	}
+
 	gitURL := fmt.Sprintf("https://x-access-token:%s@github.com/%s.git", githubCreds.Token, githubCreds.RepoPath)
 
 	client := kpackclient.NewForConfigOrDie(ctrl.GetConfigOrDie())
