@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	DefaultMCCHost = "wss://mcc.onspaceship.com/socket/websocket"
+	DefaultGroundControlHost = "wss://ground-control.onspaceship.com/socket/websocket"
 )
 
 type SocketOptions struct {
@@ -35,9 +35,9 @@ func (options *SocketOptions) Configure() error {
 
 	options.AgentId = viper.GetString("agent_id")
 
-	options.Host = viper.GetString("mcc_host")
+	options.Host = viper.GetString("ground_control_host")
 	if options.Host == "" {
-		return errors.New("invalid mcc_host configuration")
+		return errors.New("invalid ground_control_host configuration")
 	}
 
 	namespace, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
@@ -50,5 +50,5 @@ func (options *SocketOptions) Configure() error {
 }
 
 func init() {
-	viper.SetDefault("mcc_host", DefaultMCCHost)
+	viper.SetDefault("ground_control_host", DefaultGroundControlHost)
 }

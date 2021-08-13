@@ -26,7 +26,7 @@ type socket struct {
 func StartListener(exit chan bool) {
 	socket := New()
 
-	log.Info("Connecting to the Master Control Center...")
+	log.Info("Connecting to Ground Control...")
 
 	wait.Forever(socket.Connect, 5*time.Second)
 
@@ -36,7 +36,7 @@ func StartListener(exit chan bool) {
 func New() *socket {
 	options, err := config.NewSocketOptions()
 	if err != nil {
-		log.WithError(err).Fatal("failed to configure MCC socket")
+		log.WithError(err).Fatal("failed to configure Ground Control socket")
 	}
 
 	return &socket{
@@ -65,18 +65,18 @@ func (socket *socket) Connect() {
 				logline = logline.WithField("status", resp.Status)
 			}
 
-			logline.Error("Could not reach MCC")
+			logline.Error("Could not reach Ground Control")
 			return false, nil
 		}
 
-		log.Info("Connected to MCC!")
+		log.Info("Connected to Ground Control!")
 
 		socket.conn = conn
 		return true, nil
 	})
 
 	if err != nil {
-		log.Fatal("Retry attempts exceeded when connecting to MCC")
+		log.Fatal("Retry attempts exceeded when connecting to Ground Control")
 	}
 
 	defer socket.conn.Close()
@@ -99,12 +99,12 @@ func (socket *socket) listen(done context.CancelFunc) {
 	for {
 		err := socket.conn.ReadJSON(&message)
 		if err != nil {
-			log.WithError(err).Error("Error reading from MCC")
+			log.WithError(err).Error("Error reading from Ground Control")
 			return
 		}
 
 		if !isPhoenixEvent(message.Event) && message.Topic == "booster:"+socket.AgentId {
-			log.WithField("event", message.Event).WithField("payload", message.Payload).Debug("New message from MCC")
+			log.WithField("event", message.Event).WithField("payload", message.Payload).Debug("New message from Ground Control")
 
 			handler.Handle(string(message.Event), message.Payload, socket.Options)
 		}
