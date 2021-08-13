@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	AgentIdAnnotation = "agent.onspaceship.com/agent-id"
+	AgentIdAnnotation = "onspaceship.com/agent-id"
 )
 
 func (socket *socket) ensureAgentId() {
@@ -26,9 +26,9 @@ func (socket *socket) ensureAgentId() {
 
 	client := kubernetes.NewForConfigOrDie(ctrl.GetConfigOrDie())
 
-	deployment, err := client.AppsV1().Deployments(socket.Namespace).Get(ctx, "spaceship-agent", metav1.GetOptions{})
+	deployment, err := client.AppsV1().Deployments(socket.Namespace).Get(ctx, "booster-connect", metav1.GetOptions{})
 	if err != nil {
-		log.WithError(err).Fatal("Could not get Kubernetes deployment for the Spaceship Agent")
+		log.WithError(err).Fatal("Could not get Kubernetes deployment for Booster")
 	}
 
 	agentId := deployment.Annotations[AgentIdAnnotation]
@@ -38,13 +38,11 @@ func (socket *socket) ensureAgentId() {
 		log.Infof("Generating a new Agent ID: %v", agentId)
 
 		deployment.Annotations[AgentIdAnnotation] = agentId
-		deployment, err = client.AppsV1().Deployments(socket.Namespace).Update(ctx, deployment, metav1.UpdateOptions{})
+		_, err = client.AppsV1().Deployments(socket.Namespace).Update(ctx, deployment, metav1.UpdateOptions{})
 		if err != nil {
 			log.WithError(err).Fatal("Could not store new Agent ID in Kubernetes")
 		}
 	}
 
 	socket.AgentId = agentId
-
-	return
 }

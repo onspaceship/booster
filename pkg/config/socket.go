@@ -30,7 +30,7 @@ func NewSocketOptions() (*SocketOptions, error) {
 func (options *SocketOptions) Configure() error {
 	options.Token = viper.GetString("token")
 	if options.Token == "" {
-		log.Fatal("An agent token must be provided. Please check your Spaceship account for more details.")
+		log.Fatal("An agent token must be provided.")
 	}
 
 	options.AgentId = viper.GetString("agent_id")

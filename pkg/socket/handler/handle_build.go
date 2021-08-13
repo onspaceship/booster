@@ -86,7 +86,7 @@ func handleBuild(jsonPayload []byte, options *config.SocketOptions) {
 			Builder: kpackapi.BuildBuilderSpec{
 				Image: "paketobuildpacks/builder:full",
 			},
-			ServiceAccount: "kpack",
+			ServiceAccount: "booster",
 		},
 	}
 
