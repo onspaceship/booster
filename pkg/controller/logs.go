@@ -22,7 +22,7 @@ func (rec *Reconciler) getBuildLogs(build *buildapi.Build) string {
 	}
 
 	for _, container := range pod.Status.InitContainerStatuses {
-		if container.State.Waiting == nil && container.Name != "prepare" {
+		if container.State.Waiting == nil && (container.Name == "detect" || container.Name == "build") {
 			readyContainers = append(readyContainers, container.Name)
 		}
 	}
