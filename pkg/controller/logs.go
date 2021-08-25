@@ -12,10 +12,6 @@ import (
 )
 
 func (rec *Reconciler) getBuildLogs(build *buildapi.Build) string {
-	if build.Status.PodName == "" {
-		return ""
-	}
-
 	ctx := context.Background()
 
 	var readyContainers []string

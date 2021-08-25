@@ -28,6 +28,16 @@ func (client *Client) CoreBuildUpdate(buildId string, status string, imageURI st
 	return err
 }
 
+func (client *Client) CoreBuildLogsUpdate(buildId string, logs string) error {
+	body := map[string]interface{}{
+		"logs": logs,
+	}
+
+	_, err := client.Put(client.corePath("/internal/builds/%s/logs", buildId), body)
+
+	return err
+}
+
 func (client *Client) corePath(path string, tokens ...interface{}) string {
 	url, _ := client.CoreBaseURL.Parse(fmt.Sprintf(path, tokens...))
 	return url.String()

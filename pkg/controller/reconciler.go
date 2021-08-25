@@ -52,6 +52,19 @@ func (rec *Reconciler) Reconcile(_ context.Context, req ctrl.Request) (ctrl.Resu
 
 	logger.WithField("status", status).WithField("image", build.Status.LatestImage).Info("Build updated!")
 
+	if build.Status.PodName != "" {
+		logs := rec.getBuildLogs(build)
+
+		if logs != "" {
+			err := client.NewClient().CoreBuildLogsUpdate(build.Annotations[BuildIdAnnotation], logs)
+
+			if err != nil {
+				log.WithError(err).Error("Unable to send logs to Core")
+				return ctrl.Result{Requeue: false}, err
+			}
+		}
+	}
+
 	return ctrl.Result{}, nil
 }
 
