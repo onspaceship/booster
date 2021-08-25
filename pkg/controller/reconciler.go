@@ -9,6 +9,7 @@ import (
 	buildapi "github.com/pivotal/kpack/pkg/apis/build/v1alpha1"
 	kpackapi "github.com/pivotal/kpack/pkg/apis/core/v1alpha1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/kubernetes"
 	ctrl "sigs.k8s.io/controller-runtime"
 	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -17,6 +18,8 @@ type Reconciler struct {
 	ctrlclient.Client
 	*Options
 	Scheme *runtime.Scheme
+
+	client *kubernetes.Clientset
 }
 
 type BuildStatus string

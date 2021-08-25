@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/onspaceship/booster/pkg/config"
+	"k8s.io/client-go/kubernetes"
 
 	"github.com/apex/log"
 	kpackapi "github.com/pivotal/kpack/pkg/apis/build/v1alpha1"
@@ -30,6 +31,11 @@ func StartController(exit chan<- bool) {
 		log.WithError(err).Fatal("Unable to create manager")
 	}
 
+	client, err := kubernetes.NewForConfig(kubeConfig)
+	if err != nil {
+		log.WithError(err).Fatal("Unable to connect to Kubernetes")
+	}
+
 	err = kpackapi.AddToScheme(mgr.GetScheme())
 	if err != nil {
 		log.WithError(err).Fatal("Unable to add scheme")
@@ -41,6 +47,7 @@ func StartController(exit chan<- bool) {
 			Options: options,
 			Client:  mgr.GetClient(),
 			Scheme:  mgr.GetScheme(),
+			client:  client,
 		})
 	if err != nil {
 		log.WithError(err).Fatal("Unable to create controller")
