@@ -9,7 +9,9 @@ import (
 )
 
 const (
-	DefaultGroundControlHost = "wss://ground-control.onspaceship.com/socket/websocket"
+	DefaultGroundControlHost   = "wss://ground-control.onspaceship.com/socket/websocket"
+	DefaultBuildRegistryURL    = "us.gcr.io/onspaceship"
+	DefaultBuildServiceAccount = "booster"
 )
 
 type SocketOptions struct {
@@ -18,6 +20,9 @@ type SocketOptions struct {
 
 	Host      string
 	Namespace string
+
+	BuildRegistryURL    string
+	BuildServiceAccount string
 }
 
 func NewSocketOptions() (*SocketOptions, error) {
@@ -46,9 +51,21 @@ func (options *SocketOptions) Configure() error {
 	}
 	options.Namespace = string(namespace)
 
+	options.BuildRegistryURL = viper.GetString("build_registry_url")
+	if options.BuildRegistryURL == "" {
+		return errors.New("invalid build_registry_url configuration")
+	}
+
+	options.BuildServiceAccount = viper.GetString("build_service_account")
+	if options.BuildServiceAccount == "" {
+		return errors.New("invalid build_service_account configuration")
+	}
+
 	return nil
 }
 
 func init() {
 	viper.SetDefault("ground_control_host", DefaultGroundControlHost)
+	viper.SetDefault("build_registry_url", DefaultBuildRegistryURL)
+	viper.SetDefault("build_service_account", DefaultBuildServiceAccount)
 }

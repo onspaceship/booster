@@ -45,11 +45,11 @@ func handleBuild(jsonPayload []byte, options *config.SocketOptions) {
 	log.WithField("payload", payload).Info("Handling build")
 
 	name := fmt.Sprintf("%s-%s-%s", payload.TeamHandle, payload.AppHandle, payload.BuildId)
-	tag := fmt.Sprintf("us.gcr.io/onspaceship/%s/%s", payload.TeamHandle, payload.AppHandle)
+	tag := fmt.Sprintf("%s/%s/%s", options.BuildRegistryURL, payload.TeamHandle, payload.AppHandle)
 
 	if strings.HasPrefix(payload.GitRef, "refs/heads/") {
 		branch := strings.ReplaceAll(payload.GitRef, "refs/heads/", "")
-		tag = fmt.Sprintf("us.gcr.io/onspaceship/%s/%s:%s", payload.TeamHandle, payload.AppHandle, branch)
+		tag = fmt.Sprintf("%s/%s/%s:%s", options.BuildRegistryURL, payload.TeamHandle, payload.AppHandle, branch)
 	}
 
 	gitURL := fmt.Sprintf("https://x-access-token:%s@github.com/%s.git", githubCreds.Token, githubCreds.RepoPath)
@@ -87,7 +87,7 @@ func handleBuild(jsonPayload []byte, options *config.SocketOptions) {
 			Builder: kpackapi.BuildBuilderSpec{
 				Image: payload.BuilderImage,
 			},
-			ServiceAccount: "booster",
+			ServiceAccount: options.BuildServiceAccount,
 		},
 	}
 
