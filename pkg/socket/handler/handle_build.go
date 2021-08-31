@@ -19,12 +19,13 @@ import (
 )
 
 type buildPayload struct {
-	AppId      string `json:"app_id"`
-	BuildId    string `json:"build_id"`
-	TeamHandle string `json:"team_handle"`
-	AppHandle  string `json:"app_handle"`
-	GitRef     string `json:"git_ref"`
-	GitSHA     string `json:"git_sha"`
+	AppId        string `json:"app_id"`
+	BuildId      string `json:"build_id"`
+	TeamHandle   string `json:"team_handle"`
+	AppHandle    string `json:"app_handle"`
+	GitRef       string `json:"git_ref"`
+	GitSHA       string `json:"git_sha"`
+	BuilderImage string `json:"builder_image"`
 }
 
 func handleBuild(jsonPayload []byte, options *config.SocketOptions) {
@@ -84,7 +85,7 @@ func handleBuild(jsonPayload []byte, options *config.SocketOptions) {
 				},
 			},
 			Builder: kpackapi.BuildBuilderSpec{
-				Image: "paketobuildpacks/builder:full",
+				Image: payload.BuilderImage,
 			},
 			ServiceAccount: "booster",
 		},
