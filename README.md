@@ -14,3 +14,13 @@
 ---
 
 # 🚀 Booster
+
+This service handles image builds for the Magic Container Registry. It currently uses [kpack](https://github.com/pivotal/kpack) to handle the actual build process, but the plan is to drop that dependency in the future.
+
+## Releasing
+
+Before Spaceship is self-hosting, you can build an image manually with `pack`:
+
+```sh
+pack build us.gcr.io/onspaceship/booster --builder paketobuildpacks/builder:tiny
+```
