@@ -23,4 +23,6 @@ Before Spaceship is self-hosting, you can build an image manually with `pack`:
 
 ```sh
 pack build us.gcr.io/onspaceship/booster --builder paketobuildpacks/builder:tiny
+docker tag us.gcr.io/onspaceship/booster us.gcr.io/onspaceship/booster:$(git rev-parse HEAD)
+docker push us.gcr.io/onspaceship/booster:$(git rev-parse HEAD)
 ```
