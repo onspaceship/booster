@@ -45,11 +45,11 @@ func handleBuild(jsonPayload []byte, options *config.SocketOptions) {
 	log.WithField("payload", payload).Info("Handling build")
 
 	name := fmt.Sprintf("%s-%s-%s", payload.TeamHandle, payload.AppHandle, payload.BuildId)
-	tag := fmt.Sprintf("%s/%s/%s", options.BuildRegistryURL, payload.TeamHandle, payload.AppHandle)
+	tags := []string{fmt.Sprintf("%s/%s/%s:%s", options.BuildRegistryURL, payload.TeamHandle, payload.AppHandle, payload.GitSHA)}
 
-	if strings.HasPrefix(payload.GitRef, "refs/heads/") {
-		branch := strings.ReplaceAll(payload.GitRef, "refs/heads/", "")
-		tag = fmt.Sprintf("%s/%s/%s:%s", options.BuildRegistryURL, payload.TeamHandle, payload.AppHandle, branch)
+	if strings.HasPrefix(payload.GitRef, "refs/") {
+		refParts := strings.Split(payload.GitRef, "/")
+		tags = append(tags, fmt.Sprintf("%s/%s/%s:%s", options.BuildRegistryURL, payload.TeamHandle, payload.AppHandle, refParts[len(refParts)-1]))
 	}
 
 	gitURL := fmt.Sprintf("https://x-access-token:%s@github.com/%s.git", githubCreds.Token, githubCreds.RepoPath)
@@ -77,7 +77,7 @@ func handleBuild(jsonPayload []byte, options *config.SocketOptions) {
 			},
 		},
 		Spec: kpackapi.BuildSpec{
-			Tags: []string{tag},
+			Tags: tags,
 			Source: kpackapi.SourceConfig{
 				Git: &kpackapi.Git{
 					URL:      gitURL,
