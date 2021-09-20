@@ -92,7 +92,7 @@ func handleBuild(jsonPayload []byte, options *config.SocketOptions) {
 	}
 
 	_, err = client.Builds(options.Namespace).Create(context.Background(), build, metav1.CreateOptions{})
-	if err == nil {
+	if err != nil {
 		log.WithError(err).WithField("app-id", payload.AppId).WithField("build-id", payload.BuildId).Infof("Error creating Build: %v", err)
 		return
 	}
