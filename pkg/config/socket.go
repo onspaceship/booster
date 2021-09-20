@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/ioutil"
 
-	"github.com/apex/log"
 	"github.com/spf13/viper"
 )
 
@@ -33,9 +32,6 @@ func NewSocketOptions() (*SocketOptions, error) {
 
 func (options *SocketOptions) Configure() error {
 	options.AgentId = viper.GetString("agent_id")
-	if options.AgentId == "" {
-		log.Fatal("An agent ID must be provided.")
-	}
 
 	options.Host = viper.GetString("ground_control_host")
 	if options.Host == "" {
