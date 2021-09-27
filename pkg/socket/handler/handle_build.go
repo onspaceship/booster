@@ -44,7 +44,8 @@ func handleBuild(jsonPayload []byte, options *config.SocketOptions) {
 
 	log.WithField("payload", payload).Info("Handling build")
 
-	name := fmt.Sprintf("%s-%s-%s", payload.TeamHandle, payload.AppHandle, payload.BuildId)
+	buildIdParts := strings.Split(payload.BuildId, "-")
+	name := fmt.Sprintf("%s-%s-%s", payload.TeamHandle, payload.AppHandle, buildIdParts[0])
 	tags := []string{fmt.Sprintf("%s/%s/%s:%s", options.BuildRegistryURL, payload.TeamHandle, payload.AppHandle, payload.GitSHA)}
 
 	if strings.HasPrefix(payload.GitRef, "refs/") {
